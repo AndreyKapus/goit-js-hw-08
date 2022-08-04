@@ -14,14 +14,6 @@ const galleryArray = galleryItems
 
 galleryRef.insertAdjacentHTML('beforeend', galleryArray);
 
-galleryRef.addEventListener('click', onCardClick);
-
-function onCardClick(e) {
-  e.preventDefault();
-  if (!e.target.classList.contains('gallery__image')) {
-    return;
-  }
-}
 const lightbox = new SimpleLightbox('.gallery a', {
   captions: true,
   captionsData: 'alt',

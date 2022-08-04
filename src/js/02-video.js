@@ -5,18 +5,9 @@ var player = new Vimeo.Player(iframe);
 const lastSavedTime = localStorage.getItem('videoplayer-current-time');
 console.log(lastSavedTime);
 
-player
-  .setCurrentTime(lastSavedTime)
-  .then(function (seconds) {})
-  .catch(function (error) {
-    switch (error.name) {
-      case 'RangeError':
-        break;
-
-      default:
-        break;
-    }
-  });
+if (lastSavedTime) {
+  player.setCurrentTime(lastSavedTime);
+}
 
 player.on(
   'timeupdate',
