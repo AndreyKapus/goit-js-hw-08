@@ -1,37 +1,33 @@
-import '../css/common.css';
-import '../css/03-feedback.css';
-import throttle from 'lodash.throttle';
+var throttle = require('lodash.throttle');
 
 const STORAGE_KEY = 'feedback-form-state';
-const refs = {
-  form: document.querySelector('.feedback-form'),
-  textarea: document.querySelector('.feedback-form textarea'),
-  input: document.querySelector('input'),
-};
+const formEl = document.querySelector('.feedback-form');
+
 const formData = {};
+onPopulateInput();
+formEl.addEventListener('input', throttle(onFormInputSubmit, 500));
 
-populateTextarea();
-
-refs.form.addEventListener('input', throttle(onTextareaInput, 500));
-
-refs.form.addEventListener('submit', e => {
-  e.preventDefault();
-  e.currentTarget.reset();
-  const objData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-  localStorage.removeItem(STORAGE_KEY);
-});
-
-function onTextareaInput(e) {
-  formData[e.target.name] = e.target.value;
-  const stringifyData = JSON.stringify(formData);
-  localStorage.setItem(STORAGE_KEY, stringifyData);
+function onFormInputSubmit(event) {
+  formData[event.target.name] = event.target.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
 
-function populateTextarea() {
-  const savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY));
+formEl.addEventListener('submit', onFormSubmit);
 
-  if (savedMessage) {
-    refs.textarea.value = savedMessage['message'] || '';
-    refs.input.value = savedMessage['email'] || '';
+function onFormSubmit(event) {
+  event.preventDefault();
+  event.currentTarget.reset();
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function onPopulateInput() {
+  const datalocalStorage = localStorage.getItem(STORAGE_KEY);
+  const parsedDatalocalStorage = JSON.parse(datalocalStorage);
+  if (parsedDatalocalStorage) {
+    Object.entries(parsedDatalocalStorage).forEach(([name, value]) => {
+      formEl.elements[name].value = value;
+      formData[name] = value;
+    });
   }
 }
+console.log('Object', formData);
